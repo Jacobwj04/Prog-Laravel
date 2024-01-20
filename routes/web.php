@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\ProjectAdminController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,9 +20,28 @@ Route::get('/', function () {
     return view('base');
 })->name('homepage');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::prefix('/dashboard')
+     ->middleware(['auth', 'verified'])
+     ->group(function () {
+        Route::get(
+            '/',
+            [ProjectAdminController::class, 'index'] // load the index function of the ProjectAdminController, we have access to the projects
+        )->name('dashboard');
+        Route::get(
+            'create',
+            [ProjectAdminController::class, 'create'] 
+        )->name('dashboard/create');
+        Route::post(
+            'store',
+            [ProjectAdminController::class, 'store'] 
+        )->name('dashboard/store');
+
+         Route::resources(
+             [
+                 'project' => ProjectAdminController::class,
+             ]
+         );
+     });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
