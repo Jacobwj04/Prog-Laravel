@@ -35,6 +35,10 @@ Route::prefix('/dashboard')
             'store',
             [ProjectAdminController::class, 'store'] 
         )->name('dashboard/store');
+        Route::get(
+            'edit',
+            [ProjectAdminController::class, 'edit'] 
+        )->name('dashboard/edit');
 
          Route::resources(
              [

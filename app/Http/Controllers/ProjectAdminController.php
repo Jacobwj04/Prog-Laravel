@@ -29,7 +29,17 @@ class ProjectAdminController extends Controller
      */
     public function store(Request $request)
     {
-        dump( $request->all() );
+        $valid = $request->validate([
+            'titel' => 'required',
+            'description' => 'required',
+        ]);
+
+        // dd($valid);
+
+        $item = new Project($valid);
+        $item->save();
+
+        return redirect( route('dashboard', $item->id ) );        
     }
 
     /**
@@ -45,7 +55,7 @@ class ProjectAdminController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        return view('dashboard.projects.edit', ['projects'=>$projects]);
     }
 
     /**
@@ -53,7 +63,17 @@ class ProjectAdminController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        //
+        $valid_data = $request->validate(
+            [
+                'titel'       => 'required',
+                'description' => 'required',
+            ]
+        );
+
+        $project->update($valid_data);
+        $project->save();
+        
+        return redirect( route('project.index', $project->id ) );
     }
 
     /**
@@ -61,6 +81,7 @@ class ProjectAdminController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
+        return redirect(route('projects.index'))->with('alert', 'Het item '.$project->title.' is nu weg.');
     }
 }
